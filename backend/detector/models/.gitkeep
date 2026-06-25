@@ -1,0 +1,2 @@
+# The fine-tuned Sentence-BERT checkpoint (from notebooks/01_train_similarity_model.ipynb)
+# is saved here as plagiarism-sbert/. If absent, the backend uses the stock pretrained model.
