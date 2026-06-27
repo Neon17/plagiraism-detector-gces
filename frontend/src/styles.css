@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* App background: deep slate with a soft sky/indigo glow */
+body {
+  @apply text-slate-200;
+  min-height: 100vh;
+  background-color: #020617;
+  background-image:
+    radial-gradient(60rem 40rem at 80% -10%, rgba(56, 189, 248, 0.14), transparent 60%),
+    radial-gradient(50rem 40rem at 0% 0%, rgba(129, 140, 248, 0.12), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* Reusable glass card */
+@layer components {
+  .card {
+    @apply rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-sm;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent;
+  }
+}
