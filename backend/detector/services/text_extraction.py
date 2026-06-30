@@ -1,0 +1,79 @@
+"""Text extraction (proposal step 1): uploaded file -> plain text.
+
+Supports PDF, DOCX, TXT and images (Tesseract OCR for English). Each format has its
+own small helper so adding a new format later is a one-function change.
+"""
+from __future__ import annotations
+
+import io
+import os
+
+
+def _from_txt(data: bytes) -> str:
+    return data.decode('utf-8', errors='ignore')
+
+
+def _from_pdf(data: bytes) -> str:
+    import pdfplumber
+
+    text = []
+    with pdfplumber.open(io.BytesIO(data)) as pdf:
+        for page in pdf.pages:
+            text.append(page.extract_text() or '')
+    joined = '\n'.join(text).strip()
+    # Scanned PDF with no text layer -> fall back to OCR of page images.
+    if not joined:
+        return _ocr_pdf(data)
+    return joined
+
+
+def _ocr_pdf(data: bytes) -> str:
+    try:
+        import pdfplumber
+        import pytesseract
+
+        text = []
+        with pdfplumber.open(io.BytesIO(data)) as pdf:
+            for page in pdf.pages:
+                image = page.to_image(resolution=200).original
+                text.append(pytesseract.image_to_string(image, lang='eng'))
+        return '\n'.join(text).strip()
+    except Exception:
+        return ''
+
+
+def _from_docx(data: bytes) -> str:
+    import docx
+
+    document = docx.Document(io.BytesIO(data))
+    return '\n'.join(p.text for p in document.paragraphs)
+
+
+def _from_image(data: bytes) -> str:
+    import pytesseract
+    from PIL import Image
+
+    image = Image.open(io.BytesIO(data))
+    return pytesseract.image_to_string(image, lang='eng')
+
+
+_EXTRACTORS = {
+    '.txt': _from_txt,
+    '.md': _from_txt,
+    '.pdf': _from_pdf,
+    '.docx': _from_docx,
+    '.png': _from_image,
+    '.jpg': _from_image,
+    '.jpeg': _from_image,
+    '.bmp': _from_image,
+    '.tiff': _from_image,
+}
+
+
+def extract_text(filename: str, data: bytes) -> str:
+    """Route an uploaded file to the right extractor based on its extension."""
+    ext = os.path.splitext(filename.lower())[1]
+    extractor = _EXTRACTORS.get(ext)
+    if extractor is None:
+        raise ValueError(f'Unsupported file type: {ext}')
+    return extractor(data).strip()
