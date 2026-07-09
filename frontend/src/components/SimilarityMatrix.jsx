@@ -50,6 +50,16 @@ export default function SimilarityMatrix({ documents, matrix }) {
         </table>
       </div>
 
+      {/* Legend */}
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
+        <span>Low</span>
+        <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-teal-400 via-amber-400 to-red-500" />
+        <span>High copy</span>
+      </div>
+
+      <p className="mt-3 text-xs text-slate-500">
+        {documents.map((d, i) => `D${i + 1} = ${d}`).join('   ·   ')}
+      </p>
     </div>
   )
 }
