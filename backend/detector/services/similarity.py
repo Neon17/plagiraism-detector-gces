@@ -16,6 +16,12 @@ import torch
 
 DEFAULT_THRESHOLD = 0.7
 
+# Long documents are cut into chunks of this many sentences before encoding, because
+# the model truncates anything longer than its input window.
+CHUNK_SENTENCES = 5
+# Sentences/chunks are encoded this many at a time instead of one call per sentence.
+BATCH_SIZE = 32
+
 # Path where notebook 01 saves the fine-tuned checkpoint.
 _MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'models', 'plagiarism-sbert')
 
@@ -71,10 +77,31 @@ class TfidfEngine:
         return _cosine_matrix(vectors)
 
 
+def chunk_text(text: str, sentences_per_chunk: int = CHUNK_SENTENCES) -> list[str]:
+    """Split a document into chunks of a few sentences each.
+
+    A whole document does not fit in the model input, so the tail of a long document
+    used to be silently dropped. Encoding chunks and averaging them keeps all of it.
+    """
+    from .preprocess import split_sentences
+
+    sentences = split_sentences(text)
+    if not sentences:
+        stripped = text.strip()
+        return [stripped] if stripped else []
+    return [
+        ' '.join(sentences[i:i + sentences_per_chunk])
+        for i in range(0, len(sentences), sentences_per_chunk)
+    ]
+
+
 class SbertEngine:
     """Sentence-BERT semantic similarity. Lazily loads the model once (singleton)."""
 
     _model = None
+    # Same sentence is compared in many pairs of the matrix, so encode it only once.
+    _cache: dict[str, torch.Tensor] = {}
+    _CACHE_LIMIT = 4096
 
     @classmethod
     def get_model(cls):
@@ -90,14 +117,50 @@ class SbertEngine:
         return os.path.isdir(_MODEL_DIR)
 
     @classmethod
+    def clear_cache(cls) -> None:
+        cls._cache.clear()
+
+    @classmethod
     def embed(cls, texts: list[str]) -> torch.Tensor:
-        model = cls.get_model()
-        return model.encode(texts, convert_to_tensor=True)
+        """Encode texts in batches, reusing anything that was encoded earlier."""
+        if not texts:
+            return torch.empty(0)
+
+        missing = list(dict.fromkeys(t for t in texts if t not in cls._cache))
+        if missing:
+            model = cls.get_model()
+            fresh = model.encode(missing, batch_size=BATCH_SIZE, convert_to_tensor=True)
+            if len(cls._cache) + len(missing) > cls._CACHE_LIMIT:
+                cls._cache.clear()
+            for text, vector in zip(missing, fresh):
+                cls._cache[text] = vector
+        return torch.stack([cls._cache[t] for t in texts])
+
+    @classmethod
+    def document_embeddings(cls, texts: list[str]) -> torch.Tensor:
+        """One vector per document, built from the mean of its chunk vectors.
+
+        Every chunk of every document goes into a single batched call, so the model
+        is entered once per request instead of once per document.
+        """
+        chunks_per_doc = [chunk_text(t) for t in texts]
+        flat = [c for chunks in chunks_per_doc for c in chunks]
+        if not flat:
+            return torch.zeros(len(texts), 1)
+
+        vectors = cls.embed(flat)
+        out, cursor = [], 0
+        for chunks in chunks_per_doc:
+            if not chunks:
+                out.append(torch.zeros_like(vectors[0]))
+                continue
+            out.append(vectors[cursor:cursor + len(chunks)].mean(dim=0))
+            cursor += len(chunks)
+        return torch.stack(out)
 
     @classmethod
     def matrix(cls, texts: list[str]) -> list[list[float]]:
-        embeddings = cls.embed(texts)
-        return _cosine_matrix(embeddings)
+        return _cosine_matrix(cls.document_embeddings(texts))
 
 
 def all_pairs_matrix(texts: list[str], method: str = 'sbert') -> list[list[float]]:
