@@ -14,11 +14,12 @@ export default function SimilarityMatrix({ documents, matrix }) {
   return (
     <div className="card">
       <h2 className="mb-4 text-lg font-semibold text-white">Similarity matrix</h2>
-      <div className="overflow-x-auto">
+      <div className="-mx-2 overflow-x-auto px-2">
         <table className="border-separate border-spacing-1">
           <thead>
             <tr>
-              <th className="p-2" />
+              {/* Sticky corner, so the row labels stay visible while scrolling sideways */}
+              <th className="sticky left-0 z-10 bg-slate-950/80 p-2 backdrop-blur" />
               {documents.map((d, i) => (
                 <th key={i} title={d} className="p-2 text-xs font-semibold text-slate-400">
                   D{i + 1}
@@ -31,7 +32,7 @@ export default function SimilarityMatrix({ documents, matrix }) {
               <tr key={i}>
                 <th
                   title={documents[i]}
-                  className="p-2 text-right text-xs font-semibold text-slate-400"
+                  className="sticky left-0 z-10 bg-slate-950/80 p-2 text-right text-xs font-semibold text-slate-400 backdrop-blur"
                 >
                   D{i + 1}
                 </th>
@@ -39,7 +40,7 @@ export default function SimilarityMatrix({ documents, matrix }) {
                   <td
                     key={j}
                     style={cellStyle(val, i === j)}
-                    className="h-12 w-12 rounded-lg text-center text-sm font-bold"
+                    className="h-10 w-10 rounded-lg text-center text-xs font-bold sm:h-12 sm:w-12 sm:text-sm"
                   >
                     {i === j ? '—' : `${(val * 100).toFixed(0)}%`}
                   </td>
@@ -57,9 +58,14 @@ export default function SimilarityMatrix({ documents, matrix }) {
         <span>High copy</span>
       </div>
 
-      <p className="mt-3 text-xs text-slate-500">
-        {documents.map((d, i) => `D${i + 1} = ${d}`).join('   ·   ')}
-      </p>
+      {/* One document per line on a phone, two or three columns on a wider screen */}
+      <ul className="mt-3 grid grid-cols-1 gap-x-6 text-xs text-slate-500 sm:grid-cols-2 lg:grid-cols-3">
+        {documents.map((d, i) => (
+          <li key={i} className="truncate" title={d}>
+            D{i + 1} = {d}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

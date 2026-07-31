@@ -16,7 +16,7 @@ body {
 /* Reusable glass card */
 @layer components {
   .card {
-    @apply rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-sm;
+    @apply rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xl backdrop-blur-sm sm:p-6;
   }
   .gradient-text {
     @apply bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent;
