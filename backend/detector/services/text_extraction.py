@@ -1,12 +1,33 @@
 """Text extraction (proposal step 1): uploaded file -> plain text.
 
-Supports PDF, DOCX, TXT and images (Tesseract OCR for English). Each format has its
-own small helper so adding a new format later is a one-function change.
+Supports PDF, DOCX, TXT and images. Tesseract reads English and, when the Nepali
+traineddata is installed, Devanagari as well. Each format has its own small helper so
+adding a new format later is a one-function change.
 """
 from __future__ import annotations
 
 import io
 import os
+
+# Override with OCR_LANG=eng to force English only, or OCR_LANG=nep for Nepali only.
+_LANG_OVERRIDE = os.environ.get('OCR_LANG', '')
+_resolved_lang: str | None = None
+
+
+def ocr_lang() -> str:
+    """Read Devanagari too when its traineddata is present, else stay on English."""
+    global _resolved_lang
+    if _LANG_OVERRIDE:
+        return _LANG_OVERRIDE
+    if _resolved_lang is None:
+        try:
+            import pytesseract
+
+            installed = set(pytesseract.get_languages(config=''))
+        except Exception:
+            installed = set()
+        _resolved_lang = 'eng+nep' if 'nep' in installed else 'eng'
+    return _resolved_lang
 
 
 def _from_txt(data: bytes) -> str:
@@ -36,7 +57,7 @@ def _ocr_pdf(data: bytes) -> str:
         with pdfplumber.open(io.BytesIO(data)) as pdf:
             for page in pdf.pages:
                 image = page.to_image(resolution=200).original
-                text.append(pytesseract.image_to_string(image, lang='eng'))
+                text.append(pytesseract.image_to_string(image, lang=ocr_lang()))
         return '\n'.join(text).strip()
     except Exception:
         return ''
@@ -54,7 +75,7 @@ def _from_image(data: bytes) -> str:
     from PIL import Image
 
     image = Image.open(io.BytesIO(data))
-    return pytesseract.image_to_string(image, lang='eng')
+    return pytesseract.image_to_string(image, lang=ocr_lang())
 
 
 _EXTRACTORS = {
