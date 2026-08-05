@@ -92,9 +92,25 @@ _EXTRACTORS = {
 
 
 def extract_text(filename: str, data: bytes) -> str:
-    """Route an uploaded file to the right extractor based on its extension."""
+    """Route an uploaded file to the right extractor based on its extension.
+
+    Every failure leaves through ValueError with a message that can be shown to the
+    user, so a bad upload never reaches the API as a server error.
+    """
+    if not data:
+        raise ValueError('The file is empty.')
+
     ext = os.path.splitext(filename.lower())[1]
     extractor = _EXTRACTORS.get(ext)
     if extractor is None:
-        raise ValueError(f'Unsupported file type: {ext}')
-    return extractor(data).strip()
+        supported = ', '.join(sorted(_EXTRACTORS))
+        raise ValueError(f'Unsupported file type "{ext or filename}". Supported: {supported}.')
+
+    try:
+        text = extractor(data).strip()
+    except Exception as exc:                      # corrupt file, broken archive, bad image
+        raise ValueError(f'The file could not be read ({type(exc).__name__}).') from exc
+
+    if not text:
+        raise ValueError('No text could be read. If this is a scan, use a clearer image.')
+    return text
