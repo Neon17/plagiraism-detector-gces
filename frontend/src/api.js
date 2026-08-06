@@ -22,10 +22,11 @@ async function post(path, body, isForm) {
   return res.json()
 }
 
-export async function compareDocuments(files, method = 'sbert') {
+export async function compareDocuments(files, method = 'sbert', threshold) {
   const form = new FormData()
   for (const file of files) form.append('files', file)
   form.append('method', method)
+  if (threshold != null) form.append('threshold', threshold)
   return post('/compare/', form, true)
 }
 

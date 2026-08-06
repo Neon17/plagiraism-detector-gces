@@ -11,13 +11,15 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [method, setMethod] = useState('sbert')
+  const [threshold, setThreshold] = useState(0.7)
 
   async function handleCompare(filesToUse) {
     setLoading(true)
     setError('')
     setResult(null)
     try {
-      const data = await compareDocuments(filesToUse ?? files, 'sbert')
+      const data = await compareDocuments(filesToUse ?? files, method, threshold)
       setResult(data)
     } catch (e) {
       setError(e.message)
@@ -27,6 +29,7 @@ export default function App() {
   }
 
   const flaggedCount = result?.flagged_pairs?.length ?? 0
+  const skipped = result?.skipped ?? []
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
@@ -66,6 +69,14 @@ export default function App() {
             loading={loading}
           />
 
+          <Settings
+            method={method}
+            setMethod={setMethod}
+            threshold={threshold}
+            setThreshold={setThreshold}
+            disabled={loading}
+          />
+
           {error && (
             <div className="my-4 flex items-center gap-3 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-red-300">
               <span className="text-xl">⚠️</span>
@@ -76,7 +87,7 @@ export default function App() {
           {result && (
             <div className="mt-8 space-y-6">
               {/* Summary stats */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <StatCard label="Documents" value={result.documents.length} />
                 <StatCard
                   label="Flagged pairs"
@@ -90,7 +101,21 @@ export default function App() {
                 />
               </div>
 
+              {skipped.length > 0 && (
+                <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
+                  <p className="mb-1 font-medium">Some files were skipped:</p>
+                  <ul className="list-inside list-disc space-y-0.5">
+                    {skipped.map((s) => (
+                      <li key={s.name}>
+                        {s.name} — {s.error}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <SimilarityMatrix documents={result.documents} matrix={result.matrix} />
+              <ScoreLegend threshold={result.threshold} />
               <HighlightedText pairs={result.flagged_pairs} />
             </div>
           )}
@@ -100,6 +125,60 @@ export default function App() {
       <footer className="mt-16 text-center text-xs text-slate-500">
         Built for Project II · Gandaki College of Engineering and Science
       </footer>
+    </div>
+  )
+}
+
+function Settings({ method, setMethod, threshold, setThreshold, disabled }) {
+  return (
+    <div className="card mt-4 flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <label className="flex items-center gap-3 text-sm text-slate-300">
+        <span className="whitespace-nowrap">Engine</span>
+        <select
+          value={method}
+          disabled={disabled}
+          onChange={(e) => setMethod(e.target.value)}
+          className="rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-sm text-slate-100"
+        >
+          <option value="sbert">Sentence-BERT (semantic)</option>
+          <option value="tfidf">TF-IDF (baseline)</option>
+        </select>
+      </label>
+
+      <label className="flex flex-1 items-center gap-3 text-sm text-slate-300 sm:max-w-xs">
+        <span className="whitespace-nowrap">Threshold</span>
+        <input
+          type="range"
+          min="0.4"
+          max="0.95"
+          step="0.05"
+          value={threshold}
+          disabled={disabled}
+          onChange={(e) => setThreshold(Number(e.target.value))}
+          className="flex-1 accent-sky-500"
+        />
+        <span className="w-10 text-right font-mono text-sky-300">
+          {threshold.toFixed(2)}
+        </span>
+      </label>
+    </div>
+  )
+}
+
+function ScoreLegend({ threshold }) {
+  const bands = [
+    { color: 'bg-emerald-400', label: 'Below 0.40 — unrelated' },
+    { color: 'bg-amber-400', label: '0.40 to 0.70 — same topic, worth a look' },
+    { color: 'bg-red-400', label: `Above ${Number(threshold ?? 0.7).toFixed(2)} — flagged as copied` },
+  ]
+  return (
+    <div className="card flex flex-col gap-2 p-4 text-xs text-slate-400 sm:flex-row sm:gap-6">
+      {bands.map((b) => (
+        <span key={b.label} className="flex items-center gap-2">
+          <span className={`h-2.5 w-2.5 rounded-full ${b.color}`} />
+          {b.label}
+        </span>
+      ))}
     </div>
   )
 }
