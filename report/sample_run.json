@@ -1,0 +1,117 @@
+{
+  "documents": [
+    "doc1_original.txt",
+    "doc2_paraphrased.txt",
+    "doc3_unrelated.txt",
+    "doc4_nepali.txt"
+  ],
+  "tfidf": [
+    [
+      1.0,
+      0.4676,
+      0.0,
+      0.0
+    ],
+    [
+      0.4676,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "sbert": [
+    [
+      1.0,
+      0.6676,
+      0.0062,
+      -0.0181
+    ],
+    [
+      0.6676,
+      1.0,
+      0.0967,
+      0.0336
+    ],
+    [
+      0.0062,
+      0.0967,
+      1.0,
+      -0.0257
+    ],
+    [
+      -0.0181,
+      0.0336,
+      -0.0257,
+      1.0
+    ]
+  ],
+  "pairs": [
+    {
+      "a": "doc1_original.txt",
+      "b": "doc2_paraphrased.txt",
+      "sbert": 0.6676,
+      "tfidf": 0.4676,
+      "percent_copied": 25.0,
+      "copied_sentences": 1,
+      "sentences_a": 4
+    },
+    {
+      "a": "doc1_original.txt",
+      "b": "doc3_unrelated.txt",
+      "sbert": 0.0062,
+      "tfidf": 0.0,
+      "percent_copied": 0.0,
+      "copied_sentences": 0,
+      "sentences_a": 4
+    },
+    {
+      "a": "doc1_original.txt",
+      "b": "doc4_nepali.txt",
+      "sbert": -0.0181,
+      "tfidf": 0.0,
+      "percent_copied": 0.0,
+      "copied_sentences": 0,
+      "sentences_a": 4
+    },
+    {
+      "a": "doc2_paraphrased.txt",
+      "b": "doc3_unrelated.txt",
+      "sbert": 0.0967,
+      "tfidf": 0.0,
+      "percent_copied": 0.0,
+      "copied_sentences": 0,
+      "sentences_a": 4
+    },
+    {
+      "a": "doc2_paraphrased.txt",
+      "b": "doc4_nepali.txt",
+      "sbert": 0.0336,
+      "tfidf": 0.0,
+      "percent_copied": 0.0,
+      "copied_sentences": 0,
+      "sentences_a": 4
+    },
+    {
+      "a": "doc3_unrelated.txt",
+      "b": "doc4_nepali.txt",
+      "sbert": -0.0257,
+      "tfidf": 0.0,
+      "percent_copied": 0.0,
+      "copied_sentences": 0,
+      "sentences_a": 4
+    }
+  ],
+  "fine_tuned": true
+}

@@ -1,0 +1,10 @@
+{
+  "documents": 10,
+  "words_per_document": 2628,
+  "sentences_total": 1335,
+  "pairs_highlighted": 45,
+  "before_seconds": 27.1,
+  "after_seconds": 5.3,
+  "speedup": 5.1,
+  "device": "cpu"
+}

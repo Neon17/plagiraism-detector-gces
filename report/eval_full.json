@@ -1,0 +1,162 @@
+{
+  "qqp": {
+    "pairs": 2000,
+    "positives": 692,
+    "threshold": 0.7,
+    "tfidf": {
+      "accuracy": 0.6665,
+      "precision": 0.538,
+      "recall": 0.2558,
+      "f1": 0.3467,
+      "tp": 177,
+      "tn": 1156,
+      "fp": 152,
+      "fn": 515,
+      "seconds": 0.3,
+      "mean_positive": 0.5372,
+      "mean_negative": 0.3341,
+      "separation": 0.2031
+    },
+    "tfidf_best": {
+      "threshold": 0.55,
+      "accuracy": 0.6695,
+      "precision": 0.5268,
+      "recall": 0.4408,
+      "f1": 0.4799,
+      "tp": 305,
+      "tn": 1034,
+      "fp": 274,
+      "fn": 387
+    },
+    "sbert_pretrained": {
+      "accuracy": 0.743,
+      "precision": 0.58,
+      "recall": 0.9321,
+      "f1": 0.7151,
+      "tp": 645,
+      "tn": 841,
+      "fp": 467,
+      "fn": 47,
+      "seconds": 19.1,
+      "mean_positive": 0.8663,
+      "mean_negative": 0.5563,
+      "separation": 0.31
+    },
+    "sbert_pretrained_best": {
+      "threshold": 0.8,
+      "accuracy": 0.8005,
+      "precision": 0.6866,
+      "recall": 0.7789,
+      "f1": 0.7299,
+      "tp": 539,
+      "tn": 1062,
+      "fp": 246,
+      "fn": 153
+    },
+    "sbert": {
+      "accuracy": 0.826,
+      "precision": 0.7544,
+      "recall": 0.737,
+      "f1": 0.7456,
+      "tp": 510,
+      "tn": 1142,
+      "fp": 166,
+      "fn": 182,
+      "seconds": 6.1,
+      "mean_positive": 0.7787,
+      "mean_negative": 0.3308,
+      "separation": 0.4479
+    },
+    "sbert_best": {
+      "threshold": 0.7,
+      "accuracy": 0.826,
+      "precision": 0.7544,
+      "recall": 0.737,
+      "f1": 0.7456,
+      "tp": 510,
+      "tn": 1142,
+      "fp": 166,
+      "fn": 182
+    }
+  },
+  "mrpc": {
+    "pairs": 408,
+    "positives": 279,
+    "threshold": 0.7,
+    "tfidf": {
+      "accuracy": 0.5049,
+      "precision": 0.9326,
+      "recall": 0.2975,
+      "f1": 0.4511,
+      "tp": 83,
+      "tn": 123,
+      "fp": 6,
+      "fn": 196,
+      "seconds": 0.1,
+      "mean_positive": 0.5891,
+      "mean_negative": 0.4404,
+      "separation": 0.1487
+    },
+    "tfidf_best": {
+      "threshold": 0.25,
+      "accuracy": 0.7108,
+      "precision": 0.7038,
+      "recall": 0.9964,
+      "f1": 0.8249,
+      "tp": 278,
+      "tn": 12,
+      "fp": 117,
+      "fn": 1
+    },
+    "sbert_pretrained": {
+      "accuracy": 0.7475,
+      "precision": 0.7733,
+      "recall": 0.8925,
+      "f1": 0.8286,
+      "tp": 249,
+      "tn": 56,
+      "fp": 73,
+      "fn": 30,
+      "seconds": 9.2,
+      "mean_positive": 0.8369,
+      "mean_negative": 0.7103,
+      "separation": 0.1266
+    },
+    "sbert_pretrained_best": {
+      "threshold": 0.65,
+      "accuracy": 0.7475,
+      "precision": 0.7604,
+      "recall": 0.9211,
+      "f1": 0.8331,
+      "tp": 257,
+      "tn": 48,
+      "fp": 81,
+      "fn": 22
+    },
+    "sbert": {
+      "accuracy": 0.6691,
+      "precision": 0.8077,
+      "recall": 0.6774,
+      "f1": 0.7368,
+      "tp": 189,
+      "tn": 84,
+      "fp": 45,
+      "fn": 90,
+      "seconds": 1.9,
+      "mean_positive": 0.7392,
+      "mean_negative": 0.5665,
+      "separation": 0.1727
+    },
+    "sbert_best": {
+      "threshold": 0.45,
+      "accuracy": 0.7328,
+      "precision": 0.7515,
+      "recall": 0.9104,
+      "f1": 0.8233,
+      "tp": 254,
+      "tn": 45,
+      "fp": 84,
+      "fn": 25
+    }
+  }
+}
