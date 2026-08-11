@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plagiarism Detector — Explanation and Demo Guide</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#1c2430; --muted:#5b6775; --rule:#dfe4ea;
+  --accent:#0f2e52; --accent-soft:#e8edf3; --link:#1a5fb4;
+  --code-bg:#f4f6f8; --code-fg:#b03060; --quote:#f7f9fb;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1319; --fg:#e3e8ee; --muted:#98a3b1; --rule:#28313d;
+    --accent:#8fb8ec; --accent-soft:#1a2431; --link:#7ab3f5;
+    --code-bg:#161c25; --code-fg:#f08cb0; --quote:#141b24;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+main{max-width:52rem;margin:0 auto;padding:3rem 1.25rem 5rem}
+h1{font-size:2.1rem;line-height:1.2;text-align:center;color:var(--accent);
+  margin:0 0 .5rem;letter-spacing:-.02em}
+h1+p{text-align:center;color:var(--muted);margin-top:0}
+h2{font-size:1.4rem;margin:2.6rem 0 .8rem;padding-bottom:.35rem;
+  border-bottom:2px solid var(--accent-soft);color:var(--accent);letter-spacing:-.01em}
+h3{font-size:1.1rem;margin:1.8rem 0 .5rem;color:var(--accent)}
+h4{font-size:1rem;margin:1.3rem 0 .4rem;color:var(--accent)}
+p{margin:0 0 .9rem}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:currentColor}
+hr{border:0;border-top:1px solid var(--rule);margin:2.2rem 0}
+ul,ol{margin:0 0 1rem;padding-left:1.4rem}
+li{margin:.28rem 0}
+code{background:var(--code-bg);color:var(--code-fg);padding:.12em .38em;
+  border-radius:4px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88em}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;
+  padding:.9rem 1rem;overflow-x:auto;margin:0 0 1.1rem}
+pre code{background:none;color:var(--fg);padding:0;font-size:.85rem;line-height:1.55}
+blockquote{margin:0 0 1.1rem;padding:.85rem 1.1rem;background:var(--quote);
+  border-left:3px solid var(--accent);border-radius:0 6px 6px 0;color:var(--fg)}
+.tw{overflow-x:auto;margin:0 0 1.3rem}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border:1px solid var(--rule);padding:.5rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;color:var(--accent)}
+tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--accent-soft) 35%,transparent)}
+figure{margin:1.5rem 0;text-align:center}
+figure img{max-width:100%;height:auto;border:1px solid var(--rule);border-radius:8px;background:#fff}
+figcaption{margin-top:.5rem;font-size:.85rem;color:var(--muted);font-style:italic}
+.toc{background:var(--quote);border:1px solid var(--rule);border-radius:8px;
+  padding:1rem 1.2rem;margin:1.8rem 0}
+.toc-title{margin:0 0 .5rem;font-weight:600;font-size:.8rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted)}
+.toc ol{margin:0;padding-left:1.3rem;columns:2;column-gap:2rem}
+.toc li{margin:.2rem 0;font-size:.92rem;break-inside:avoid}
+@media (max-width:640px){.toc ol{columns:1} main{padding:2rem 1rem 3rem} h1{font-size:1.65rem}}
+@media print{
+  body{background:#fff;color:#000} main{max-width:none;padding:0}
+  h2{page-break-after:avoid} figure,table,pre{page-break-inside:avoid} .toc{break-inside:avoid}
+}
+
+</style></head><body>
+<main>
+<h1 id="plagiarism-detector-explanation-and-demo-guide">Plagiarism Detector — Explanation and Demo Guide</h1>
+<nav class="toc"><p class="toc-title">Contents</p><ol>
+<li><a href="#who-studies-what">Who studies what</a></li>
+<li><a href="#1-the-project-in-sixty-seconds-studied-by-all-three">1. The project in sixty seconds  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#2-the-one-demonstration-that-proves-the-project-studied-by-all-three">2. The one demonstration that proves the project  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#3-numbers-to-know-by-heart-studied-by-all-three">3. Numbers to know by heart  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#4-questions-you-should-expect-studied-by-all-three">4. Questions you should expect  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#5-demo-script-studied-by-all-three">5. Demo script  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#6-if-the-demo-breaks-studied-by-all-three">6. If the demo breaks  ·  studied by <strong>All three</strong></a></li>
+<li><a href="#7-weak-points-own-them-before-they-are-found-studied-by-all-three">7. Weak points — own them before they are found  ·  studied by <strong>All three</strong></a></li>
+</ol></nav>
+<p>Project II · Gandaki College of Engineering and Science</p>
+<p>A companion to <a href="ARCHITECTURE_AND_DESIGN.html">Architecture and Design</a>. That document describes the system; this one is for standing in front of it and explaining it.</p>
+<hr>
+<h2 id="who-studies-what">Who studies what</h2>
+<p>Question ownership follows the Division of Work in the report. <strong>Everyone learns sections 1, 2, 3, 5 and 7</strong> — the opening, the demonstration, the numbers and the weak points are asked of whoever is standing there.</p>
+<div class="tw"><table><thead><tr><th>Member</th><th>Answers questions on</th></tr></thead><tbody>
+<tr><td>Neon Neupane</td><td>The engineering: architecture, endpoints, extraction and OCR, preprocessing, the speed work, error handling, and the Nepali handling</td></tr>
+<tr><td>Bishal Acharya</td><td>The model: Sentence-BERT, fine-tuning, the loss, the corpora, the TF-IDF baseline, the accuracy figures and the domain shift</td></tr>
+<tr><td>Nabin Giri</td><td>The frontend: the React application, how it calls the API, the uploader, the matrix, the highlight views and the controls</td></tr>
+<tr><td>All three</td><td>The pitch, the live demonstration, the numbers table and the limitations</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="1-the-project-in-sixty-seconds-studied-by-all-three">1. The project in sixty seconds  ·  studied by <strong>All three</strong></h2>
+<blockquote>The tools students can reach today either cost money or compare words. A word comparison is defeated by changing a few words. Our system compares the <strong>meaning</strong> of sentences instead, using a Sentence-BERT model we fine-tuned ourselves, so a paraphrase is still caught. It does two checks — documents against each other, and one document against the web — and it marks the copied sentences inside the document so the result can be verified by eye rather than trusted.</blockquote>
+<p>If you say nothing else, say that.</p>
+<hr>
+<h2 id="2-the-one-demonstration-that-proves-the-project-studied-by-all-three">2. The one demonstration that proves the project  ·  studied by <strong>All three</strong></h2>
+<p>Everything rests on a single comparison. Rehearse it until it is automatic.</p>
+<div class="tw"><table><thead><tr><th></th><th>TF-IDF baseline</th><th>SBERT fine-tuned</th></tr></thead><tbody>
+<tr><td><code>doc1_original</code> vs <code>doc2_paraphrased</code></td><td><strong>0.468</strong> — missed</td><td><strong>0.668</strong> — caught, 25% copied</td></tr>
+<tr><td><code>doc1_original</code> vs <code>doc3_unrelated</code></td><td>0.000</td><td>0.006</td></tr>
+<tr><td><code>doc1_original</code> vs <code>doc4_nepali</code></td><td>0.000</td><td>-0.018</td></tr>
+</tbody></table></div>
+<p>Show the baseline <strong>fail first</strong>, then switch the engine. The contrast is the argument.</p>
+<hr>
+<h2 id="3-numbers-to-know-by-heart-studied-by-all-three">3. Numbers to know by heart  ·  studied by <strong>All three</strong></h2>
+<div class="tw"><table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+<tr><td>Base model</td><td><code>all-MiniLM-L6-v2</code>, 6 layers, 384 dimensions</td></tr>
+<tr><td>Fine-tuned on</td><td>Quora Question Pairs, 30,000 pairs, 1 epoch</td></tr>
+<tr><td>Loss</td><td><code>CosineSimilarityLoss</code></td></tr>
+<tr><td>Threshold</td><td>0.7, adjustable 0.40–0.95 in the interface</td></tr>
+<tr><td>Chunk size</td><td>5 sentences</td></tr>
+<tr><td>Batch size</td><td>32</td></tr>
+<tr><td>Accuracy (QQP, 2000 pairs)</td><td>TF-IDF 0.667 · pretrained 0.743 · <strong>fine-tuned 0.826</strong></td></tr>
+<tr><td>F1</td><td>TF-IDF 0.347 · pretrained 0.715 · <strong>fine-tuned 0.746</strong></td></tr>
+<tr><td>Separation</td><td>TF-IDF 0.203 · pretrained 0.310 · <strong>fine-tuned 0.448</strong></td></tr>
+<tr><td>Speed-up</td><td>27.1 s → 5.3 s = <strong>5.1×</strong> on 10 documents</td></tr>
+<tr><td>Endpoints</td><td><code>/api/health/</code>, <code>/api/compare/</code>, <code>/api/check-web/</code></td></tr>
+<tr><td>Ports</td><td>Django 8000, Vite 5173</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="4-questions-you-should-expect-studied-by-all-three">4. Questions you should expect  ·  studied by <strong>All three</strong></h2>
+<h3 id="about-the-model-studied-by-bishal">About the model  ·  studied by <strong>Bishal</strong></h3>
+<p><strong>How does the system decide a sentence is copied?</strong> Both sentences are turned into 384-dimensional vectors by Sentence-BERT. We take the cosine of the angle between them. At or above 0.7 the sentence is marked copied. The threshold was fixed experimentally on the sample documents and is adjustable in the interface.</p>
+<p><strong>Why Sentence-BERT and not TF-IDF?</strong> TF-IDF compares words. A paraphrase shares few words, so it scores low — 0.468 on our paraphrased pair, under the threshold, missed. Sentence-BERT compares meaning and scores the same pair 0.668. We kept TF-IDF in the system as a selectable baseline so the difference can be shown, not just claimed.</p>
+<p><strong>What did fine-tuning actually improve?</strong> Separation. The pretrained model scores everything high — it averages 0.556 even on unrelated pairs — so no single threshold separates them cleanly. After fine-tuning, unrelated pairs fall to 0.331 while plagiarised pairs stay at 0.779. The gap goes from 0.310 to 0.448, and accuracy from 0.743 to 0.826.</p>
+<p><strong>Why `CosineSimilarityLoss`?</strong> It pushes the cosine of a similar pair towards 1 and of a dissimilar pair towards 0. Cosine similarity is exactly what the detector uses at runtime, so the model is trained on the same quantity it is judged by.</p>
+<p><strong>Why Quora Question Pairs?</strong> It is large — about 364,000 labelled pairs — it is free, it downloads without a login, and its label is precisely &quot;do these two mean the same thing&quot;, which is the question we ask. We used 30,000 pairs so training finishes on a laptop CPU.</p>
+<p><strong>A document is longer than the model input. What happens to the rest?</strong> It is not dropped. <code>chunk_text()</code> cuts the document into chunks of five sentences, every chunk is embedded, and the document vector is the mean of the chunk vectors. Before we did this the tail of a long document was silently truncated.</p>
+<p><strong>Is the percentage an average of scores?</strong> No — it is a count. For every sentence of A we take its best match in B; if that score clears the threshold the sentence counts as copied. The percentage is copied sentences divided by total sentences. That is why every point of it can be pointed at on screen.</p>
+<p><strong>What is the accuracy?</strong> 0.826 on 2000 held-out QQP pairs at threshold 0.7, with precision 0.754 and F1 0.746, against 0.667 for the TF-IDF baseline.</p>
+<p><strong>Where is the model weakest?</strong> *(Ask this of yourself before the panel does.)* On MRPC — a corpus we did not tune on — our fine-tuned model scores 0.669 against the pretrained model&#x27;s 0.748. Tuning on QQP moved it towards QQP&#x27;s notion of a paraphrase. That is domain shift, and it is in the report as a limitation rather than left out.</p>
+<h3 id="about-the-engineering-studied-by-neon">About the engineering  ·  studied by <strong>Neon</strong></h3>
+<p><strong>How do the frontend and backend connect?</strong> Vite proxies <code>/api</code> to Django on port 8000, so the browser makes a same-origin request. CORS is also enabled with <code>CorsMiddleware</code> for direct cross-origin calls. <code>api.js</code> is the only frontend file that talks to the backend, and it uses the relative base <code>/api</code>, so the same build works either way.</p>
+<p><strong>Why is there no login?</strong> Nothing is stored. The file is read into memory, compared, and dropped when the response is sent. There is no account and no saved document, so there is nothing to protect. DRF is configured with no authentication classes and <code>AllowAny</code>.</p>
+<p><strong>Then why is a database configured?</strong> Django requires the setting. We never write to it — this is shown explicitly in the level 1 data flow diagram, which has no data store.</p>
+<p><strong>Why is a service layer separate from the views?</strong> The view only parses the request, calls a service and returns JSON. That keeps the similarity logic testable without starting Django, which is what the tests under <code>backend/tests/</code> do, and it means a new engine or format is a change in one file.</p>
+<p><strong>How was it made faster?</strong> Two changes. All chunks of all documents now go into one batched <code>model.encode()</code> call, so the model is entered once per request instead of once per document. And a sentence cache means a sentence appearing in many pairs of the matrix is encoded once. Together: 27.1 s to 5.3 s on ten documents, a 5.1× speed-up with identical output.</p>
+<p><strong>What happens when a file cannot be read?</strong> It stays in the response under <code>skipped</code>, with the reason. The comparison runs on the rest and the interface shows an amber panel naming the file. Extraction failures leave as <code>ValueError</code> with a message written for the user, so the API never returns a 500 for a bad upload.</p>
+<p><strong>What if the network fails during the web check?</strong> Every network call is wrapped. A search failure returns an empty list, a page that will not load is skipped, and the request still answers. Explicit URLs can be passed instead of searching.</p>
+<p><strong>Why does a page with a high score sometimes not appear in the web results?</strong> Because it shares no sentence. A high document-level score with zero copied sentences is topical overlap, not plagiarism, so we drop it deliberately.</p>
+<h3 id="about-nepali-studied-by-neon">About Nepali  ·  studied by <strong>Neon</strong></h3>
+<p><strong>How is Nepali handled?</strong> Three places. The sentence splitter treats the danda <code>।</code> and double danda <code>॥</code> as sentence ends. The tokeniser&#x27;s character class covers the Devanagari block and the stopword list includes common Nepali function words. And Tesseract is given <code>eng+nep</code> when the Nepali traineddata is installed, detected at runtime.</p>
+<p><strong>Is Nepali as accurate as English?</strong> No. The model was fine-tuned on English pairs, so Nepali accuracy is lower. We chose to write that in the report as a limitation instead of hiding it, and fine-tuning on a Nepali paraphrase corpus is the first item of future work.</p>
+<hr>
+<h2 id="5-demo-script-studied-by-all-three">5. Demo script  ·  studied by <strong>All three</strong></h2>
+<p>Have both servers running and <code>curl http://localhost:8000/api/health/</code> returning <code>model_fine_tuned: true</code> <strong>before</strong> you begin.</p>
+<div class="tw"><table><thead><tr><th>#</th><th>Action</th><th>Say</th></tr></thead><tbody>
+<tr><td>1</td><td>Upload the four samples, engine <strong>TF-IDF</strong>, compare</td><td>&quot;This is what a word-based checker does. The paraphrase scores 0.468 — below threshold. It is missed.&quot;</td></tr>
+<tr><td>2</td><td>Switch to <strong>Sentence-BERT</strong>, compare again</td><td>&quot;Same files, meaning-based model. 0.668 — caught, 25% copied.&quot;</td></tr>
+<tr><td>3</td><td>Open the sentence panel</td><td>&quot;The percentage is a count of matched sentences, so you can check it yourself.&quot;</td></tr>
+<tr><td>4</td><td>Point at the unrelated and Nepali rows</td><td>&quot;0.006 and -0.018. It is not flagging everything — it separates.&quot;</td></tr>
+<tr><td>5</td><td>Drag the threshold to 0.65</td><td>&quot;The threshold is a policy choice, sent with each request, not a constant.&quot;</td></tr>
+<tr><td>6</td><td><strong>Check against web</strong> tab, paste a paragraph, run</td><td>&quot;Sources come back scored and sorted, with links. Pages sharing no sentence are dropped.&quot;</td></tr>
+<tr><td>7</td><td>Upload a corrupt file with two good ones</td><td>&quot;The bad file is named with its reason and the rest still compares. Nothing crashes.&quot;</td></tr>
+</tbody></table></div>
+<p>Close on the point you opened with: a paraphrase defeats a word checker and does not defeat this one.</p>
+<hr>
+<h2 id="6-if-the-demo-breaks-studied-by-all-three">6. If the demo breaks  ·  studied by <strong>All three</strong></h2>
+<div class="tw"><table><thead><tr><th>Symptom</th><th>Fix on the spot</th></tr></thead><tbody>
+<tr><td><code>model_fine_tuned: false</code></td><td>Say the checkpoint is not loaded and that the numbers shown are the pretrained model&#x27;s; the comparison still works</td></tr>
+<tr><td>Web check returns nothing</td><td>The endpoint is rate-limited; pass explicit URLs, the API accepts a <code>urls</code> list</td></tr>
+<tr><td>First request hangs a few seconds</td><td>The model is loading — it is a singleton, the next request is fast</td></tr>
+<tr><td>Scan returns no text</td><td>Tesseract missing or the scan is poor; switch to a text file</td></tr>
+<tr><td>Nepali OCR is gibberish</td><td>The <code>nep</code> traineddata is not installed on this machine</td></tr>
+</tbody></table></div>
+<p>Never debug silently in front of the panel. Say what is happening and move to the next step.</p>
+<hr>
+<h2 id="7-weak-points-own-them-before-they-are-found-studied-by-all-three">7. Weak points — own them before they are found  ·  studied by <strong>All three</strong></h2>
+<ul><li><strong>Nepali accuracy is lower than English.</strong> Fine-tuned on English pairs.</li><li><strong>The fine-tuned model loses on MRPC.</strong> Domain shift from QQP.</li><li><strong>Sentence splitting is regex-based.</strong> &quot;Dr.&quot; can split a sentence early.</li><li><strong>The web check depends on one search endpoint.</strong> No API key, so rate limits apply.</li><li><strong>No queue.</strong> A very large batch occupies the request; comparison is in-process.</li></ul>
+<p>Each of these is in the report with the reason. Stating a limitation before it is found reads as understanding the system; being caught by it does not.</p>
+</main></body></html>
