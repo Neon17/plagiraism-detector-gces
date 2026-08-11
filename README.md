@@ -5,8 +5,8 @@ Hey, welcome to our project repo! This is a web-based plagiarism detector we bui
 The main idea was to build something free and fast that doesn't save your files permanently (privacy first!). It checks documents against each other and also searches the web for copied content.
 
 ### Team Members
-- Neon Neupane (Backend & ML)
-- Bishal Acharya (Frontend)
+- Neon Neupane (Backend & Integration)
+- Bishal Acharya (Machine Learning & Model)
 - Nabin Giri (Frontend)
 
 ## Features
@@ -18,7 +18,8 @@ The main idea was to build something free and fast that doesn't save your files 
 ## Folder Structure
 - `frontend/` - React and Vite stuff. This is the UI where you upload files.
 - `backend/` - Django server. Handles the AI model, OCR, and API endpoints.
-- `notebooks/` - Our Jupyter notebooks used to train the AI model on the MIT Plagiarism dataset.
+- `notebooks/` - Our Jupyter notebooks for the training experiments. The checkpoint that
+  ships with the backend was trained by `train.py` on the Quora Question Pairs corpus.
 
 ## How to Run It locally
 
