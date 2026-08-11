@@ -19,3 +19,6 @@ backend/detector/models/plagiarism-sbert/
 .vscode/
 .idea/
 .DS_Store
+
+# Manual upload test documents (generated, not part of the source)
+/tests/
