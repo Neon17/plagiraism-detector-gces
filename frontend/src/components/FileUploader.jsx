@@ -47,7 +47,6 @@ export default function FileUploader({ files, setFiles, onCompare, loading }) {
 
   return (
     <div className="card">
-      {/* Mode toggle */}
       <div className="mb-5 flex gap-1 rounded-xl border border-white/10 bg-white/5 p-1 w-fit">
         <ModeButton active={mode === 'upload'} onClick={() => setMode('upload')}>
           Upload files

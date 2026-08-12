@@ -1,11 +1,9 @@
 import MatchHighlights from './MatchHighlights.jsx'
 
-// Shows each flagged pair: "X% copied" progress bar + highlighted matched sentences.
 export default function HighlightedText({ pairs }) {
   if (!pairs || pairs.length === 0) {
     return (
       <div className="card text-center">
-        <div className="mb-2 text-4xl">🎉</div>
         <h2 className="text-lg font-semibold text-white">No plagiarism detected</h2>
         <p className="text-sm text-slate-400">No document pair crossed the threshold.</p>
       </div>

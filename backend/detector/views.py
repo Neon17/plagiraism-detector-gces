@@ -1,4 +1,3 @@
-"""HTTP layer -- thin. Views only parse the request, call a service, return JSON."""
 from __future__ import annotations
 
 from rest_framework import status
@@ -13,8 +12,8 @@ from .services.text_extraction import extract_text
 def _collect_documents(request) -> list[dict]:
     """Build [{name, text}] from uploaded files and/or pasted texts.
 
-    A file that cannot be read is kept in the list with an 'error' key instead of being
-    dropped silently, so the user is told which upload failed and why.
+    A file that cannot be read stays in the list with an 'error' key instead of being
+    dropped silently.
     """
     documents = []
     for f in request.FILES.getlist('files'):
@@ -25,7 +24,6 @@ def _collect_documents(request) -> list[dict]:
             continue
         documents.append({'name': f.name, 'text': text})
 
-    # Pasted texts: JSON list of {name, text}
     for i, item in enumerate(request.data.get('texts', []) or []):
         name = item.get('name', f'text-{i + 1}')
         text = (item.get('text') or '').strip()
@@ -37,12 +35,10 @@ def _collect_documents(request) -> list[dict]:
 
 
 def _skipped(documents: list[dict]) -> list[dict]:
-    """The uploads that produced no usable text, with the reason for each."""
     return [{'name': d['name'], 'error': d['error']} for d in documents if d.get('error')]
 
 
 def _threshold(request) -> float:
-    """Similarity threshold chosen in the interface, or the default one."""
     try:
         value = float(request.data.get('threshold'))
     except (TypeError, ValueError):
@@ -51,7 +47,7 @@ def _threshold(request) -> float:
 
 
 class CompareView(APIView):
-    """POST /api/compare -- intra-class all-pairs comparison + highlights."""
+    """POST /api/compare -- all-pairs comparison + highlights."""
 
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
@@ -80,7 +76,6 @@ class CompareView(APIView):
         threshold = _threshold(request)
         matrix = similarity.all_pairs_matrix(texts, method=method)
 
-        # Sentence-level highlights for every flagged pair (score above threshold).
         pairs = []
         for i in range(len(texts)):
             for j in range(i + 1, len(texts)):

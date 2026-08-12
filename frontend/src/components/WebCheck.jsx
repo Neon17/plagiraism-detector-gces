@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import { checkWeb } from '../api.js'
 import MatchHighlights from './MatchHighlights.jsx'
 
-// Check one document (pasted text OR an uploaded file) against web pages.
 export default function WebCheck() {
   const [mode, setMode] = useState('text') // 'text' | 'file'
   const [text, setText] = useState('')
@@ -44,7 +43,6 @@ export default function WebCheck() {
         add specific URLs (one per line) to compare against directly.
       </p>
 
-      {/* Mode toggle */}
       <div className="mb-4 flex w-fit gap-1 rounded-xl border border-white/10 bg-white/5 p-1">
         <ModeButton active={mode === 'text'} onClick={() => setMode('text')}>
           Paste text
@@ -151,7 +149,6 @@ function ModeButton({ active, onClick, children }) {
   )
 }
 
-// One web source: collapsed by default, expands to show sentence-level highlights.
 function SourceRow({ source }) {
   const [open, setOpen] = useState(false)
   const hasCopied = source.matches?.some((m) => m.copied)

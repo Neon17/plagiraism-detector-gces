@@ -1,7 +1,6 @@
 """Tests for the TF-IDF baseline and the chunking helper.
 
-The Sentence-BERT engine is not exercised here because loading the model needs the
-downloaded weights; it is covered by the notebook and by manual testing instead.
+The Sentence-BERT engine is left out because it needs the downloaded model weights.
 """
 import unittest
 

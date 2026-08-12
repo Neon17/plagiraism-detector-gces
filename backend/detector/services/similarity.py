@@ -1,43 +1,30 @@
-"""Similarity engines (proposal step 3-4).
-
-Two engines, both PyTorch-based (NOT scikit-learn):
-  * TfidfEngine  -- classical baseline, TF-IDF vectors built with torch tensors.
-  * SbertEngine  -- the fine-tuned Sentence-BERT model (falls back to pretrained).
-
-Public helpers:
-  all_pairs_matrix(texts, method) -> n x n cosine-similarity matrix (list of lists)
-"""
 from __future__ import annotations
 
-import math
 import os
 
 import torch
 
 DEFAULT_THRESHOLD = 0.7
 
-# Long documents are cut into chunks of this many sentences before encoding, because
-# the model truncates anything longer than its input window.
+# The model truncates anything longer than its input window, so long documents are
+# encoded in chunks of this many sentences.
 CHUNK_SENTENCES = 5
-# Sentences/chunks are encoded this many at a time instead of one call per sentence.
 BATCH_SIZE = 32
 
-# Path where notebook 01 saves the fine-tuned checkpoint.
 _MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'models', 'plagiarism-sbert')
 
 
 def _cosine_matrix(vectors: torch.Tensor) -> list[list[float]]:
-    """Cosine similarity between every pair of row vectors. Returns a plain list matrix."""
+    """Cosine similarity between every pair of row vectors."""
     normed = vectors / vectors.norm(dim=1, keepdim=True).clamp_min(1e-8)
     sim = (normed @ normed.T).clamp(-1.0, 1.0)
     return [[round(float(v), 4) for v in row] for row in sim]
 
 
 class TfidfEngine:
-    """TF-IDF + cosine similarity implemented from scratch with PyTorch tensors."""
+    """TF-IDF + cosine similarity built with PyTorch tensors."""
 
     def __init__(self, documents: list[list[str]]):
-        # documents = list of token lists (already preprocessed)
         self.documents = documents
         self.vocab = self._build_vocab(documents)
         self.idf = self._compute_idf(documents)
@@ -66,8 +53,8 @@ class TfidfEngine:
             return vec
         for tok in doc:
             vec[self.vocab[tok]] += 1
-        vec = vec / len(doc)          # term frequency
-        return vec * self.idf         # tf-idf
+        vec = vec / len(doc)
+        return vec * self.idf
 
     def matrix(self) -> list[list[float]]:
         if not self.vocab:
@@ -78,11 +65,7 @@ class TfidfEngine:
 
 
 def chunk_text(text: str, sentences_per_chunk: int = CHUNK_SENTENCES) -> list[str]:
-    """Split a document into chunks of a few sentences each.
-
-    A whole document does not fit in the model input, so the tail of a long document
-    used to be silently dropped. Encoding chunks and averaging them keeps all of it.
-    """
+    """Split a document into chunks of a few sentences each."""
     from .preprocess import split_sentences
 
     sentences = split_sentences(text)
@@ -140,8 +123,7 @@ class SbertEngine:
     def document_embeddings(cls, texts: list[str]) -> torch.Tensor:
         """One vector per document, built from the mean of its chunk vectors.
 
-        Every chunk of every document goes into a single batched call, so the model
-        is entered once per request instead of once per document.
+        Every chunk of every document goes into a single batched call.
         """
         chunks_per_doc = [chunk_text(t) for t in texts]
         flat = [c for chunks in chunks_per_doc for c in chunks]
@@ -164,7 +146,7 @@ class SbertEngine:
 
 
 def all_pairs_matrix(texts: list[str], method: str = 'sbert') -> list[list[float]]:
-    """Compare every text against every other (intra-class all-pairs).
+    """Compare every text against every other.
 
     method: 'sbert' (fine-tuned model) or 'tfidf' (baseline).
     """

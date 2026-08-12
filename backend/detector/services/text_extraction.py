@@ -1,9 +1,4 @@
-"""Text extraction (proposal step 1): uploaded file -> plain text.
-
-Supports PDF, DOCX, TXT and images. Tesseract reads English and, when the Nepali
-traineddata is installed, Devanagari as well. Each format has its own small helper so
-adding a new format later is a one-function change.
-"""
+"""Uploaded file -> plain text, for PDF, DOCX, TXT and images (OCR)."""
 from __future__ import annotations
 
 import io
@@ -94,8 +89,7 @@ _EXTRACTORS = {
 def extract_text(filename: str, data: bytes) -> str:
     """Route an uploaded file to the right extractor based on its extension.
 
-    Every failure leaves through ValueError with a message that can be shown to the
-    user, so a bad upload never reaches the API as a server error.
+    Every failure leaves through ValueError with a message safe to show the user.
     """
     if not data:
         raise ValueError('The file is empty.')

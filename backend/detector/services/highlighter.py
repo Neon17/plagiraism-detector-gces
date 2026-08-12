@@ -1,8 +1,3 @@
-"""Sentence-level matching (proposal step 6-7): 'this much copied' + highlights.
-
-Given two documents, find which sentences of A closely match a sentence in B, using
-the same SBERT embeddings. Returns the matched sentences and an overall % copied.
-"""
 from __future__ import annotations
 
 from sentence_transformers import util

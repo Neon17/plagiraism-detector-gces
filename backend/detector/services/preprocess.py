@@ -1,8 +1,3 @@
-"""Text preprocessing (proposal step 2): lowercase, stopword removal, sentence split.
-
-Handles English and Devanagari (Nepali). Devanagari has no upper/lower case and ends a
-sentence with the danda (।) instead of a full stop, so both are treated here.
-"""
 import re
 
 STOPWORDS = set(
@@ -11,19 +6,18 @@ STOPWORDS = set(
     'not no so if then than too very can will just'.split()
 )
 
-# Frequent Nepali function words, dropped for the same reason as the English ones.
+# Nepali function words.
 STOPWORDS.update(
     'र मा को का की ले लाई हो हुन छ छन् थियो थिए पनि तर वा यो त्यो यी ती जुन जब भने '
     'गर्न गरेको भएको हुन्छ हुने साथ बाट सम्म देखि नै अनि'.split()
 )
 
-# A sentence ends at a full stop, a question or exclamation mark, or a danda.
 _SENTENCE_END = re.compile(r'(?<=[.!?।॥])\s+')
 _WORD = re.compile(r'[a-z0-9ऀ-ॿ]{2,}')
 
 
 def clean(text: str) -> str:
-    """Lowercase and collapse whitespace. Kept simple on purpose."""
+    """Lowercase and collapse whitespace."""
     return re.sub(r'\s+', ' ', text.lower()).strip()
 
 
@@ -34,7 +28,7 @@ def tokenize(text: str) -> list[str]:
 
 
 def split_sentences(text: str) -> list[str]:
-    """Naive sentence splitter -- good enough for highlighting."""
+    """Split text into sentences."""
     parts = _SENTENCE_END.split(text.strip())
     sentences = []
     for part in parts:
@@ -47,7 +41,7 @@ def split_sentences(text: str) -> list[str]:
 
 
 def keywords(text: str, k: int = 6) -> list[str]:
-    """Top-k most frequent content words -- used to build a web search query."""
+    """Top-k most frequent content words, used to build a web search query."""
     freq: dict[str, int] = {}
     for w in tokenize(text):
         if len(w) >= 4:

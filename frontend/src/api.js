@@ -1,4 +1,3 @@
-// One place that talks to the Django backend.
 const BASE = '/api'
 
 async function post(path, body, isForm) {
@@ -30,7 +29,6 @@ export async function compareDocuments(files, method = 'sbert', threshold) {
   return post('/compare/', form, true)
 }
 
-// Check one document against the web. Accepts pasted text and optional URLs.
 export async function checkWeb({ text, file, urls }) {
   if (file) {
     const form = new FormData()

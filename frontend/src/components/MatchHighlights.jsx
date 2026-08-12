@@ -1,9 +1,7 @@
-// Reusable: "% copied" progress bar + sentence-level highlights for one comparison.
 // Used by both document-vs-document and text-vs-web results.
 export default function MatchHighlights({ percentCopied, matches }) {
   return (
     <>
-      {/* % copied progress bar */}
       <div className="mb-4">
         <div className="mb-1 flex justify-between text-xs text-slate-400">
           <span>Copied content</span>
@@ -17,7 +15,6 @@ export default function MatchHighlights({ percentCopied, matches }) {
         </div>
       </div>
 
-      {/* Sentences */}
       <div className="space-y-2">
         {matches.map((m, i) => (
           <div
@@ -32,7 +29,7 @@ export default function MatchHighlights({ percentCopied, matches }) {
             {m.sentence}
             {m.copied && m.matched_with && (
               <div className="mt-1 text-xs italic text-red-300/80">
-                ↳ matches: “{m.matched_with}” ({(m.score * 100).toFixed(0)}%)
+                matches: “{m.matched_with}” ({(m.score * 100).toFixed(0)}%)
               </div>
             )}
           </div>

@@ -1,10 +1,6 @@
-"""Tests for the detector services.
-
-Run them from the backend folder with:
+"""Run from the backend folder with:
 
     python -m unittest discover -s tests -t .
-
-The services are pure Python, so they are tested directly without starting Django.
 """
 import os
 import sys

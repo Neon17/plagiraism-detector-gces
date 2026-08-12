@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Proxy /api to the Django dev server so the frontend can call it without CORS worries.
+// Proxy /api to the Django dev server.
 export default defineConfig({
   plugins: [react()],
   server: {

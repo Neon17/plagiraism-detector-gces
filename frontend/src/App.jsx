@@ -33,7 +33,6 @@ export default function App() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
-      {/* Hero */}
       <header className="mb-8 text-center">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-slate-300">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
@@ -48,7 +47,6 @@ export default function App() {
         </p>
       </header>
 
-      {/* Tabs */}
       <div className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-white/10 bg-white/5 p-1">
         <TabButton active={tab === 'batch'} onClick={() => setTab('batch')}>
           Compare documents
@@ -78,15 +76,13 @@ export default function App() {
           />
 
           {error && (
-            <div className="my-4 flex items-center gap-3 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-red-300">
-              <span className="text-xl">⚠️</span>
+            <div className="my-4 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-red-300">
               {error}
             </div>
           )}
 
           {result && (
             <div className="mt-8 space-y-6">
-              {/* Summary stats */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <StatCard label="Documents" value={result.documents.length} />
                 <StatCard

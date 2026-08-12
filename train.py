@@ -1,14 +1,9 @@
-"""One-command training: fine-tune Sentence-BERT and auto-save the model.
+"""Fine-tune Sentence-BERT and save the checkpoint the backend loads.
 
-Run it once (heavy dataset), it saves the checkpoint, then the backend just loads it.
-
-    python train.py                      # default: QQP (364k pairs), auto-downloaded
-    python train.py --dataset mrpc       # smaller/faster paraphrase set
-    python train.py --dataset csv --data notebooks/data/mit.csv   # your Kaggle CSV
-    python train.py --sample 30000 --epochs 1                     # quick MVP run
-
-The default dataset (QQP) is pulled from HuggingFace automatically -- no Kaggle login
-needed -- so this command works out of the box.
+    python train.py                                    # QQP, downloaded automatically
+    python train.py --dataset mrpc
+    python train.py --dataset csv --data pairs.csv
+    python train.py --sample 30000 --epochs 1
 """
 from __future__ import annotations
 
@@ -17,7 +12,6 @@ import os
 
 import torch
 
-# Where the backend expects the fine-tuned model.
 DEFAULT_OUT = os.path.join('backend', 'detector', 'models', 'plagiarism-sbert')
 
 
@@ -40,7 +34,6 @@ def load_pairs(dataset: str, data_path: str | None):
         return (df.iloc[:, 0].tolist(), df.iloc[:, 1].tolist(),
                 df.iloc[:, 2].astype(int).tolist())
 
-    # HuggingFace datasets -- downloaded automatically, no auth.
     from datasets import load_dataset
 
     # Namespaced repo ids (required by recent huggingface_hub).
@@ -61,7 +54,7 @@ def main():
     ap.add_argument('--dataset', default='qqp', choices=['qqp', 'mrpc', 'paws', 'csv'])
     ap.add_argument('--data', default=None, help='CSV path when --dataset csv')
     ap.add_argument('--sample', type=int, default=30000,
-                    help='max training pairs (0 = use all). Keep small for a fast MVP run.')
+                    help='max training pairs (0 = use all)')
     ap.add_argument('--epochs', type=int, default=1)
     ap.add_argument('--batch', type=int, default=32)
     ap.add_argument('--base', default='all-MiniLM-L6-v2')
@@ -83,7 +76,6 @@ def main():
         labels = labels[:args.sample]
         print(f'  using first {args.sample} pairs (--sample)')
 
-    # Hold out 10% for a quick evaluation.
     n_eval = max(1, len(labels) // 10)
     train_examples = [
         InputExample(texts=[a, b], label=float(l))
@@ -103,7 +95,6 @@ def main():
         show_progress_bar=True,
     )
 
-    # Quick evaluation: cosine >= 0.7 -> predicted plagiarised.
     import numpy as np
 
     ea = model.encode(eval_a, convert_to_numpy=True)
@@ -116,7 +107,7 @@ def main():
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     model.save(args.out)
-    print(f'\n✅ Saved fine-tuned model -> {args.out}')
+    print(f'\nSaved fine-tuned model -> {args.out}')
     print('The backend now loads this automatically (health shows model_fine_tuned: true).')
 
 

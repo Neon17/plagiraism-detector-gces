@@ -1,7 +1,7 @@
-"""External plagiarism (proposal step 5): scrape web pages and compare.
+"""Scrape web pages and compare a document against them.
 
-Search via the DuckDuckGo HTML endpoint (no API key). Always degrades gracefully:
-if search fails, the caller can pass explicit URLs. The demo never dies on a bad network.
+Search goes through the DuckDuckGo HTML endpoint (no API key). If it fails, the caller
+can pass explicit URLs instead.
 """
 from __future__ import annotations
 
@@ -62,10 +62,9 @@ def check_web(text: str, urls: list[str] | None = None, max_sources: int = 10,
             continue
         page_emb = SbertEngine.embed([page])[0]
         score = float(util.cos_sim(doc_emb, page_emb))
-        # Sentence-level highlights: which of the user's sentences appear on this page.
         detail = highlighter.compare_documents(text, page, threshold=threshold)
-        # Only surface pages that actually share copied sentences. A high document-level
-        # score alone is just topical overlap, not plagiarism -- skip those.
+        # A high document-level score alone is only topical overlap, so a page is
+        # reported only when it shares copied sentences.
         if detail['percent_copied'] <= 0:
             continue
         results.append({

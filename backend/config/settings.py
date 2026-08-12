@@ -1,8 +1,3 @@
-"""Minimal Django settings for the Plagiarism Detector MVP.
-
-Deliberately small: no database models are required (the proposal says no permanent
-storage), so we keep the default SQLite only because Django expects a DB to exist.
-"""
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,11 +30,9 @@ DATABASES = {
     }
 }
 
-# Allow the React dev server to call the API.
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Uploaded files are held in memory / temp only; nothing is persisted by us.
-DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 
 STATIC_URL = 'static/'
